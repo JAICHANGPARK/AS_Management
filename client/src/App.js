@@ -48,11 +48,11 @@ const styles = theme => ({
     marginLeft: -12,
     marginRight: 20
   },
-  menu:{
-    marginTop : 15,
-    marginBottom : 15,
-    display: 'flex',
-    justifyContent : 'center'
+  menu: {
+    marginTop: 15,
+    marginBottom: 15,
+    display: "flex",
+    justifyContent: "center"
   },
   title: {
     display: "none",
@@ -143,14 +143,16 @@ class App extends Component {
     super(props);
     this.state = {
       customers: "",
-      completed: 0
+      completed: 0,
+      searchKeyword :''
     };
   }
 
   stateRefresh = () => {
     this.setState({
       Customer: "",
-      completed: 0
+      completed: 0,
+      searchKeyword: ''
     });
     this.callApi()
       .then(res =>
@@ -186,7 +188,36 @@ class App extends Component {
     return body;
   };
 
+  handleValueChange = e => {
+    console.log(e);
+    console.log(e.target.name);
+    console.log(e.target.value);
+    let nextState = {};
+    nextState[e.target.name] = e.target.value;
+    this.setState(nextState);
+  };
+
   render() {
+    const filteredComponents = data => {
+      data = data.filter(c => {
+        return c.name.indexOf(this.state.searchKeyword) > -1;
+      });
+      return data.map(c => {
+        return (
+          <Customer
+            stateRefresh={this.stateRefresh}
+            key={c.id}
+            id={c.id}
+            image={c.image}
+            name={c.name}
+            birthday={c.birthday}
+            gender={c.gender}
+            job={c.job}
+          />
+        );
+      });
+    };
+
     const { classes } = this.props;
     const cellList = [
       "번호",
@@ -227,6 +258,9 @@ class App extends Component {
                   root: classes.inputRoot,
                   input: classes.inputInput
                 }}
+                name="searchKeyword"
+                value={this.state.searchKeyword}
+                onChange={this.handleValueChange}
               />
             </div>
           </Toolbar>
@@ -255,21 +289,25 @@ class App extends Component {
             </TableHead>
             <TableBody>
               {this.state.customers ? (
-                this.state.customers.map(c => {
-                  return (
-                    <Customer
-                      stateRefresh={this.stateRefresh}
-                      key={c.id}
-                      id={c.id}
-                      image={c.image}
-                      name={c.name}
-                      birthday={c.birthday}
-                      gender={c.gender}
-                      job={c.job}
-                    />
-                  );
-                })
+                filteredComponents(this.state.customers)
               ) : (
+                // (
+                //   this.state.customers.map(c => {
+                //     return (
+                //       <Customer
+                //         stateRefresh={this.stateRefresh}
+                //         key={c.id}
+                //         id={c.id}
+                //         image={c.image}
+                //         name={c.name}
+                //         birthday={c.birthday}
+                //         gender={c.gender}
+                //         job={c.job}
+                //       />
+                //     );
+                //   })
+                // )
+
                 <TableRow>
                   <TableCell colSpan="6" align="center">
                     <CircularProgress
