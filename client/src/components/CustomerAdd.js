@@ -18,6 +18,7 @@ class CustomerAdd extends React.Component {
     e.preventDefault();
     this.addCustomer().then(response => {
       console.log(response.data);
+      this.props.stateRefresh(); //응답을 받고 리프레시
     });
 
     this.setState({
@@ -28,7 +29,8 @@ class CustomerAdd extends React.Component {
         job: "",
         fileName: ""
     })
-    window.location.reload();
+    // window.location.reload();
+    
   };
 
   handleFileChange = (e) => {
